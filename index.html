@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haus und Garten</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }
+    header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }
+    nav { display: flex; justify-content: center; background-color: #333; flex-wrap: wrap; }
+    nav a { color: white; padding: 14px 20px; text-decoration: none; display: block; cursor: pointer; transition: 0.3s; }
+    nav a:hover { background-color: #ddd; color: black; }
+    .container { padding: 20px; max-width: 1000px; margin: auto; }
+    .service { border-radius: 10px; background-color: #fff; padding: 20px; margin: 15px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .service:hover { transform: translateY(-3px); }
+    .service h3 { color: #4CAF50; margin-top: 0; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 20px; background-color: #66BB6A; color: white; font-weight: bold; margin-right: 5px; font-size: 0.9em; }
+    .btn { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: white; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; }
+    .btn:hover { background: linear-gradient(135deg, #45a049, #5ca65c); transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    footer { text-align: center; padding: 10px; background-color: #333; color: white; margin-top: 20px; }
+    form input, form select, form textarea { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 5px; }
+    section { display: none; }
+    section.active { display: block; }
+    .stammkunden, .kontakt { background-color: #e8f5e9; border-radius: 10px; padding: 15px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .stammkunden h3, .kontakt h3 { margin-top: 0; color: #388E3C; }
+    .stammkunden ul { padding-left: 20px; }
+    .stammkunden form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .stammkunden input[type="text"] { flex: 1; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    (function(){ emailjs.init("6ek2rggr6HOIthoGr"); })();
+
+    function showSection(id) {
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => section.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    window.addEventListener('DOMContentLoaded', function(){
+
+        // EmailJS Buchungsformular
+        document.getElementById('bookingForm').addEventListener('submit', function(event){
+            event.preventDefault();
+            emailjs.send('service_a7x0fml', 'template_m9opc61', {
+                from_name: document.getElementById('name').value,
+                contact: document.getElementById('contact').value,
+                service: document.getElementById('service').value,
+                message: document.getElementById('message').value
+            })
+            .then(function(response) {
+                document.getElementById('formMessage').innerText = "Vielen Dank! Ihre Buchung wurde gesendet.";
+                document.getElementById('bookingForm').reset();
+            }, function(error) {
+                document.getElementById('formMessage').innerText = "Fehler beim Senden. Bitte versuchen Sie es später.";
+            });
+        });
+
+        // Stammkunden hinzufügen
+        document.getElementById('stammkundenForm').addEventListener('submit', function(event){
+            event.preventDefault();
+            const input = document.getElementById('newCustomer');
+            if(input.value.trim() !== ""){
+                const ul = document.getElementById('stammkundenListe');
+                const li = document.createElement('li');
+                li.textContent = input.value + " - 25% Rabatt";
+                ul.appendChild(li);
+                input.value = "";
+            }
+        });
+
+    });
+</script>
+</head>
+<body>
+
+<header>
+    <h1>Haus und Garten</h1>
+</header>
+
+<nav>
+    <a onclick="showSection('home')">Home</a>
+    <a onclick="showSection('booking')">Buchung</a>
+</nav>
+
+<!-- Home -->
+<section id="home" class="container active">
+    <h2>Unsere Dienstleistungen</h2>
+
+    <div class="service">
+        <h3>Autowäsche</h3>
+        <p><span class="badge">Innen $25</span> <span class="badge">Außen $25</span> <span class="badge">Ganzwäsche $50</span></p>
+        <button class="btn" onclick="showSection('booking')">Buchen</button>
+    </div>
+
+    <div class="service">
+        <h3>Garten Dienstleistungen</h3>
+        <ul>
+            <li>Rasen mähen: <span class="badge">$10/$50/$100</span></li>
+            <li>Rasen säen: <span class="badge">$20</span></li>
+            <li>Blumen einpflanzen: <span class="badge">$10/$30</span></li>
+        </ul>
+        <button class="btn" onclick="showSection('booking')">Buchen</button>
+    </div>
+
+    <div class="stammkunden">
+        <h3>Stammkunden - 25% Rabatt</h3>
+        <ul id="stammkundenListe">
+            <li>Sei der/die erste 30% </li>
+            
+            
+        </ul>
+        <form id="stammkundenForm">
+            <input type="text" id="newCustomer" placeholder="Neuen Stammkunden eintragen" required>
+            <button type="submit" class="btn">Hinzufügen</button>
+        </form>
+    </div>
+
+    <div class="kontakt">
+        <h3>Kontakt</h3>
+        <p><strong>Namen:</strong> Johann Böttcher, Elis Böttcher</p>
+        <p><strong>Telefon:</strong> +49 160 8335622</p>
+        <p><strong>E-Mail:</strong> gmbhhausundgarten@gmail.com</p>
+    </div>
+</section>
+
+<!-- Buchung -->
+<section id="booking" class="container">
+    <h2>Buchungsformular</h2>
+    <form id="bookingForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="contact">Telefonnummer oder E-Mail:</label>
+        <input type="text" id="contact" name="contact" placeholder="Tragen Sie hier Ihre Telefonnummer oder E-Mail ein" required>
+
+        <label for="service">Dienstleistung auswählen:</label>
+        <select id="service" name="service">
+            <option>Autowäsche Innen ($25)</option>
+            <option>Autowäsche Außen ($25)</option>
+            <option>Autowäsche Ganzwäsche ($50)</option>
+            <option>Rasen mähen ($10/$50/$100)</option>
+            <option>Rasen säen ($20)</option>
+            <option>Blumen einpflanzen ($10/$30)</option>
+        </select>
+
+        <label for="message">Bei Fragen hier:</label>
+        <textarea id="message" name="message" rows="4"></textarea>
+
+        <input type="submit" value="Buchen" class="btn">
+        <p id="formMessage" style="color:green;"></p>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2025 Haus und Garten</p>
+</footer>
+
+</body>
+</html>
